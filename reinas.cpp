@@ -5,7 +5,8 @@ using namespace std;
 //Pares de vectores
 
 //Vector ya arreglado
-/*      
+
+/*
 vector <pair<int,int>> reinas = {
 
         {0,2},
@@ -17,11 +18,12 @@ vector <pair<int,int>> reinas = {
         {6,6},
         {7,4}
 
-    s }
+};
 */
+   
 
-/*//Vector con 3 distintos
-
+//Vector con 3 distintos
+/*
 vector <pair<int,int>> reinas = {
 
     {0,2},
@@ -33,10 +35,12 @@ vector <pair<int,int>> reinas = {
     {6,6},
     {7,2}
 
- }
+ };
 */
 
-/*  //Vector todos en 0
+
+//Vector todos en 0
+/*  
 
 vector <pair<int,int>> reinas = {
 
@@ -49,12 +53,13 @@ vector <pair<int,int>> reinas = {
         {6,0},
         {7,0}
 
-         }
+         };
 */
 
 //Vector en diagonal
-/*vector <pair<int,int>> reinas = {
-    {0,0},
+/*
+vector <pair<int,int>> reinas = {
+        {0,0},
         {1,1},
         {2,2},
         {3,3},
@@ -62,15 +67,13 @@ vector <pair<int,int>> reinas = {
         {5,5},
         {6,6},
         {7,7}
-};*/
-
-
-
+};
+*/
 
 
 //fila,columna
  //Vector random
-vector <pair<int,int>> reinas = {
+ vector <pair<int,int>> reinas = {
         {0,4},
         {1,6},
         {2,1},
@@ -80,10 +83,7 @@ vector <pair<int,int>> reinas = {
         {6,7},
         {7,5}
 };
-
-
-
-
+ 
 //Checa el numero de conflicto checacndo si estan en la misma fila/columna o si estan en diagonal
 int numConflictos(int reina){
     int conflicts = 0;
@@ -98,7 +98,7 @@ int numConflictos(int reina){
         }
     }
     return conflicts;
-}
+};
 
 
 int minConflicts(int repeticion){
