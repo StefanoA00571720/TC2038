@@ -80,13 +80,13 @@ vector<int> funcionZ(string text, string pattern){
 //Llamar a la funcion Z
 void llamarFZ(string texto, string patternA, string patternB, string patternC){
     
-    cout<<"Patron A"<<endl;
+    cout<<"mcode1 "<<endl;
     funcionZ(texto, patternA);
 
-    cout<<"Patron B"<<endl;
+    cout<<"mcode2"<<endl;
     funcionZ(texto,patternB);
 
-    cout<<"Patron C"<<endl;
+    cout<<"mcode3"<<endl;
     funcionZ(texto,patternC);
 
 }
@@ -157,13 +157,13 @@ void kmp(string text, string patron){
 
 //Llamar a la función kmp
 void llamarKMP(string texto, string patternA, string patternB, string patternC){
-    cout<<"Patron A"<<endl;
+    cout<<"mcode1"<<endl;
     kmp(texto, patternA);
 
-    cout<<"Patron B"<<endl;
+    cout<<"mcode2"<<endl;
     kmp(texto,patternB);
 
-    cout<<"Patron C"<<endl;
+    cout<<"mcode3"<<endl;
     kmp(texto,patternC);
 }
 
@@ -300,38 +300,37 @@ int main() {
     */
    
   
-   cout<<"Usando la funcionZ se encontro en el texto A:"<<endl;
+   cout<<"Usando la funcionZ se encontro en la transmission1: "<<endl;
    llamarFZ(textoA,malwareA,malwareB,malwareC);
 
-    cout<<"Usando la funcionZ se encontro en el texto B:"<<endl;
+    cout<<"Usando la funcionZ se encontro en el transmission2:"<<endl;
     llamarFZ(textoB,malwareA,malwareB,malwareC);
     
 
-    cout<<"Usando la KMP se encontro en el texto A:"<<endl;
+    cout<<"Usando la KMP se encontro en el transmission1:"<<endl;
     llamarKMP(textoA,malwareA,malwareB,malwareC);
 
     
-    cout<<"Usando la KMP se encontro en el texto B:"<<endl;
+    cout<<"Usando la KMP se encontro en el transmission2:"<<endl;
     llamarKMP(textoB,malwareA,malwareB,malwareC);
     
 
-   cout<<"Usando la manacher se encontro el palindrome en texto A"<<endl;
+   cout<<"Usando la manacher se encontro el palindrome en transmission1"<<endl;
     manacher(textoA);
 
-    cout<<"Usando la manacher se encontro el palindrome en texto B"<<endl;
+    cout<<"Usando la manacher se encontro el palindrome en transmission2"<<endl;
     manacher(textoB);
-    
 
-    cout<<"Substring más grande entre texto A y B "<<endl;
+    cout<<"Substring más grande entre transmission1 y transmission2"<<endl;
     substring(textoA, textoB);
 
-    cout<<"Substring más grande entre malware A y B "<<endl;
+    cout<<"Substring más grande entre mcode1 y mcode2 "<<endl;
     substring(malwareA, malwareB);
 
-    cout<<"Substring más grande entre malware A y C "<<endl;
+    cout<<"Substring más grande entre mcode1 y mcode3 "<<endl;
     substring(malwareA, malwareC);
 
-    cout<<"Substring más grande entre malware B y C "<<endl;
+    cout<<"Substring más grande entre mcode2 y mcode3 "<<endl;
     substring(malwareB, malwareC);
 
     return 0;
