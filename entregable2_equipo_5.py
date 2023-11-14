@@ -5,7 +5,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+"""
 
 channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
@@ -49,6 +49,8 @@ for i in range(len(points2D)):
 
 plt.axis('equal')
 plt.show()
+"""
+
 
 from queue import Queue
 from queue import LifoQueue
@@ -393,6 +395,8 @@ for i in range(len(coordenadasE32)):
 
 #Grafos de 8 electrodos
 #BFS
+
+"""
 print("-----BFS-----")
 print("Viaje de Fz a PO8")
 res = bfs(gr, 'Fz', 'PO8')
@@ -547,3 +551,310 @@ print(res)
 print("Viaje de F3 a O1")
 res = uniform_cost(gr32, 'F3', 'O1')
 print(res)
+"""
+
+#------------------------------FLOYD-----------------------------------
+class WeightedGraphFloyd:
+    """ 
+        Class that is used to represent a weighted graph. Internally, the class uses an adjacency matrix to 
+        store the vertices and edges of the graph. This adjacency matrix is defined by a list of lists, whose 
+        elements indicate the weights of the edges. A weight of 0 indicates that there is no connection
+        between nodes.
+        
+        The graph can be directed or indirected. In the class constructor, this property is set. The
+        behaviour of some operations depends on this property.
+        
+        This graph class assumes that it is not possible to have multiple links between vertices.
+    """
+    
+    _directed = True            # This flag indicates whether the graph is directed or indirected.
+
+    _vertices = []              # The list of vertices.
+    
+    _adjacency_matrix = []      # The adjacency matrix.
+    
+    
+    def __init__(self, directed:bool = False):
+        """ 
+            This constructor initializes an empty graph. 
+            
+            param directed: A flag that indicates whether the graph is directed (True) or undirected (False).
+        """
+        
+        self._directed = directed
+        self._vertices = []
+        self._adjacency_matrix = []
+        
+    def clear(self):
+        """ 
+            This method clears the graph. 
+        """        
+        self._vertices = []
+        self._adjacency_matrix = []
+    
+    def number_of_vertices(self):
+        """ 
+            This method returns the number of vertices of the graph.
+        """        
+        return len(self._vertices)
+    
+    def vertices(self):
+        """ 
+            This method returns the list of vertices.
+        """
+        return self._vertices
+    
+    def edges(self):
+        """ 
+            This method returns the list of edges.
+        """
+        e = []
+
+        n = len(self._vertices)
+
+        if self._directed: 
+            for i in range(n):
+                for j in range(n):
+                    if (self._adjacency_matrix[i][j] > 0):
+                        e.append((self._vertices[i], self._vertices[j], self._adjacency_matrix[i][j]))    
+        
+        else:
+            for i in range(n):
+                for j in range(i+1, n):
+                    if (self._adjacency_matrix[i][j] > 0):
+                        e.append((self._vertices[i], self._vertices[j], self._adjacency_matrix[i][j]))
+
+        return e
+
+        
+    def add_vertex(self, v):
+        """ 
+            Add vertex to the graph.   
+            
+            param v: The new vertex to be added to the graph.   
+        """
+        
+        if v in self._vertices:
+            print("Warning: Vertex ", v, " already exists")
+        else:
+            
+            self._vertices.append(v)
+            n = len(self._vertices)
+                        
+            if n > 1:
+                for vertex in self._adjacency_matrix:
+                    vertex.append(0)                    
+                
+            self._adjacency_matrix.append(n*[0])
+
+            
+    def remove_vertex(self, v):
+        """ 
+            Remove vertex from the graph.      
+            
+            param v: The vertex to be removed from the graph.   
+        """
+        
+        if v not in self._vertices:
+            print("Warning: Vertex ", v, " does not exist")
+            
+        else:
+            index = self._vertices.index(v)
+            
+            self._vertices.pop(index)
+            
+            for row in self._adjacency_matrix:
+                row.pop(index)
+            
+            self._adjacency_matrix.pop(index)
+        
+
+    def add_edge(self, v1, v2, e = 0):
+        """ 
+            Add edge to the graph. The edge is defined by two vertices v1 and v2, and
+            the weigth e of the edge. 
+            
+            param v1: The start vertex of the new edge.   
+            param v2: The end vertex of the new edge.
+            param e: The weight of the new edge. 
+        """   
+        
+        if v1 not in self._vertices:
+            # The start vertex does not exist.
+            print("Warning: Vertex ", v1, " does not exist.")  
+            
+        elif v2 not in self._vertices:
+            # The end vertex does not exist.
+            print("Warning: Vertex ", v2, " does not exist.")
+            
+        elif not self._directed and v1 == v2:
+            # The graph is undirected, so it is no allowed to have autocycles.
+            print("Warning: An undirected graph cannot have autocycles.")
+        
+        else:
+            index1 = self._vertices.index(v1)
+            index2 = self._vertices.index(v2)
+            self._adjacency_matrix[index1][index2] = e
+            
+            if not self._directed:
+                self._adjacency_matrix[index2][index1] = e
+
+    def remove_edge(self, v1, v2):
+        """ 
+            Remove edge from the graph. 
+            
+            param v1: The start vertex of the edge to be removed.
+            param v2: The end vertex of the edge to be removed.
+            param e: The weight of the edge to be removed. 
+        """     
+        
+        if v1 not in self._vertices:
+            # v1 is not a vertex of the graph
+            print("Warning: Vertex ", v1, " does not exist.")   
+            
+        elif v2 not in self._vertices:
+            # v2 is not a vertex of the graph
+            print("Warning: Vertex ", v2, " does not exist.")
+            
+        else:
+            index1 = self._vertices.index(v1)
+            index2 = self._vertices.index(v2)
+            self._adjacency_matrix[index1][index2] = 0
+            
+            if not self._directed:
+                self._adjacency_matrix[index2][index1] = 0
+
+    def adjacent_vertices(self, v):
+        """ 
+            Adjacent vertices of a vertex.
+            
+            param v: The vertex whose adjacent vertices are to be returned.
+            return: The list of adjacent vertices of v.
+        """      
+                
+        if v not in self._vertices:
+            # The vertex is not in the graph.
+            print("Warning: Vertex ", v, " does not exist.")
+            return []        
+        
+        else:
+            adjacent_list = []
+            
+            n = len(self._vertices)
+            i = self._vertices.index(v)
+                       
+            for j in range(n):
+                if self._adjacency_matrix[i][j] != 0:
+                    adjacent_list.append((self._vertices[j], self._adjacency_matrix[i][j]))
+
+            return adjacent_list 
+            
+    def is_adjacent(self, v1, v2) -> bool:
+        """ 
+            This method indicates whether vertex v2 is adjacent to vertex v1.
+            
+            param v1: The start vertex of the relation to test.
+            param v2: The end vertex of the relation to test.
+            return: True if v2 is adjacent to v1, False otherwise.
+        """
+        
+        if v1 not in self._vertices:
+            # v1 is not a vertex of the graph
+            print("Warning: Vertex ", v1, " does not exist.") 
+            return False
+            
+        elif v2 not in self._vertices:
+            # v2 is not a vertex of the graph
+            print("Warning: Vertex ", v2, " does not exist.")
+            return False
+        
+        else:
+                      
+            i = self._vertices.index(v1)
+            j = self._vertices.index(v2)
+                       
+            return self._adjacency_matrix[i][j] != 0
+
+    def print_graph(self):
+        """ 
+            This method shows the edges of the graph.
+        """
+        
+        n = len(self._vertices)
+        for i in range(n):
+            for j in range(n):
+                if self._adjacency_matrix[i][j] != 0:
+                    print(self._vertices[i], " -> ", self._vertices[j], " edge weight: ", self._adjacency_matrix[i][j])
+
+
+def floyd_marshall(adjacency_matrix):
+    """ 
+        This method finds the length of the shortest paths between all the vertices
+        of a undirected graph.
+            
+        param adjacency_matrix: The adjacency matrix of the undirected graph.
+        return: A matrix with the length of the shortest paths between vertices of 
+        the graph.
+    """
+    
+    BIG_NUMBER = 100000000
+    n = len(adjacency_matrix)   
+
+    matrix = np.array(adjacency_matrix)    
+    matrix[matrix == 0] = BIG_NUMBER 
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if matrix[i][k] != BIG_NUMBER and matrix[k][j] != BIG_NUMBER and (matrix[i][k]+matrix[k][j]) < matrix[i][j]:
+                    matrix[i][j] = matrix[i][k]+matrix[k][j]
+                    
+    return matrix
+
+
+#Crear la grafica
+grFloyd32 = WeightedGraphFloyd(directed = False)
+grFloyd8 = WeightedGraphFloyd(directed = False)
+
+
+#Matriz de conexion, 0 y 1
+matriz32Floyd = np.loadtxt('LecturaS0A.txt', dtype=int)
+matriz8Floyd = np.loadtxt('Lectura_Stef.txt', dtype=int)
+
+
+#DatosE8 = mapa con los nombres y coordenadas de los electrodos
+coordenadasE32Floyd = np.loadtxt('mapa32electrodos.txt',  dtype=str)
+coordenadasE8Floyd = np.loadtxt('mapa8electrodos.txt',  dtype=str)
+
+
+#Añadir los vertices
+
+for i in range(len(coordenadasE32Floyd)):
+    grFloyd32.add_vertex(coordenadasE32Floyd[i][0])
+
+for i in range(len(coordenadasE8Floyd)):
+    grFloyd8.add_vertex(coordenadasE8Floyd[i][0])
+
+
+#Añador las aristas entre los vertices
+
+for i in range(len(coordenadasE32Floyd)):
+    for x in range(len(matriz32Floyd[i])):
+        if (matriz32Floyd[i][x] == 1 and grFloyd32.is_adjacent(coordenadasE32Floyd[i][0],coordenadasE32Floyd[x][0])== False):
+            
+            costo = distancia(float(coordenadasE32Floyd[i][1]),float(coordenadasE32Floyd[i][2]),float(coordenadasE32Floyd[i][3]),float(coordenadasE32Floyd[x][1]),float(coordenadasE32Floyd[x][2]),float(coordenadasE32Floyd[x][3]))
+            grFloyd32.add_edge(coordenadasE32Floyd[i][0], coordenadasE32Floyd[x][0], costo)
+
+for i in range(len(coordenadasE8Floyd)):
+    for x in range(len(matriz8Floyd[i])):
+        if (matriz8Floyd[i][x] == 1 and grFloyd8.is_adjacent(coordenadasE8Floyd[i][0],coordenadasE8Floyd[x][0])== False):
+            
+            costo = distancia(float(coordenadasE8Floyd[i][1]),float(coordenadasE8Floyd[i][2]),float(coordenadasE8Floyd[i][3]),float(coordenadasE8Floyd[x][1]),float(coordenadasE8Floyd[x][2]),float(coordenadasE8Floyd[x][3]))
+            grFloyd8.add_edge(coordenadasE8Floyd[i][0], coordenadasE8Floyd[x][0], costo)
+
+
+print("Length of shortest paths Matriz 32")
+print(floyd_marshall(grFloyd32._adjacency_matrix))
+
+print("Length of shortest paths Matriz 8")
+print(floyd_marshall(grFloyd8._adjacency_matrix))
