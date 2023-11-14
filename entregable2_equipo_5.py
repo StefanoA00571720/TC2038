@@ -207,7 +207,6 @@ class WeightedGraph:
 
     def print_graph(self):
         #Muestra las aristas de la grafica
-
         for vertex in self._adjacency_list:
             for edges in self._adjacency_list[vertex]:
                 print(vertex," -> ",edges[0], " peso ",edges[1])
@@ -357,6 +356,7 @@ def distancia(xA, yA, zA, xB, yB, zB):
 
 #Funcion para llenar la grafica
 def graficas(matrizTexto, coordenadasTexto,grafica=WeightedGraph):
+    print(matrizTexto)
     matriz = np.loadtxt(matrizTexto, dtype=int)
     coordenadas = np.loadtxt(coordenadasTexto,  dtype=str)
 
@@ -401,13 +401,13 @@ gr = WeightedGraph(directed = False)
 
 #Enviar a la funcion de graficas, el nombre de la matriz que vas a usar, el mapa de electrodos, y la grafica
 #Individuales
-#graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
-#graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
+graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
+#graficas('Memoria_Stef.txt','mapa8electrodos.txt',gr)
 #graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
 
-graficas('LecturaS0A.txt', 'mapa32electrodos.txt', gr)
-#graficas('MemoriasSOA.txt', 'mapa32electrodos.txt', gr)
-#graficas('OperacionesSOA.txt', 'mapa32electrodos.txt', gr)
+#graficas('LecturaS0A.txt', 'mapa32electrodos.txt', gr)
+#graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', gr)
+#graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', gr)
 
 
 #Arreglo origen destino, tuplas de donde parte a donde va el camino a explorar
@@ -700,13 +700,73 @@ grFloyd = WeightedGraphFloyd(directed = False)
 
 
 #Matriz de conexion, 0 y 1
-graficas('Lectura_Stef.txt', 'mapa8electrodos.txt', grFloyd)
+#graficas('Lectura_Stef.txt', 'mapa8electrodos.txt', grFloyd)
 #graficas('Memoria_Stef.txt', 'mapa8electrodos.txt', grFloyd)
-#graficas('Operaciones_Stef.txt', 'mapa8electrodos.txt', grFloyd)
+graficas('Operaciones_Stef.txt', 'mapa8electrodos.txt', grFloyd)
 
 #graficas('LecturaS0A.txt', 'mapa32electrodos.txt', grFloyd)
 #graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', grFloyd)
 #graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', grFloyd)
 
 print("Length of shortest paths Matriz")
-print(floyd_marshall(grFloyd._adjacency_matrix))
+#print(floyd_marshall(grFloyd._adjacency_matrix))
+
+def prim(v0, graph=WeightedGraph, newGraph = WeightedGraph):
+    
+    cost = 0
+    selected = [v0]
+    newGraph.add_vertex(v0)
+    remain = []
+    vnext = None
+    padre = None
+
+    
+
+    for i in graph.vertices():
+        if i != v0 and len(graph.adjacent_vertices(i)) > 0:
+            remain.append(i)
+        
+    while len(remain) > 0:
+        minCost = float('inf')
+        padre = None
+        vnext = None
+
+        for vector in selected:
+            vecinos = graph._adjacency_list[vector]
+            
+            for vecino in vecinos:
+                cn = vecino[1]
+
+                if(cn < minCost and vecino[0] not in selected):
+                    padre = vector
+                    minCost = cn
+                    vnext = vecino[0]
+        
+        if (vnext == None):
+            print("No hay solucion")
+            return None
+        
+        
+        newGraph.add_vertex(vnext)
+        newGraph.add_edge(padre,vnext,minCost)
+
+        selected.append(vnext)
+        remain.remove(vnext)
+
+        cost = cost + minCost
+
+
+
+    print(selected, cost)
+    return(selected, cost)
+
+
+#Para prim se tiene que crear una nueva grafica que se llenara con los valores ddel arbol minimo
+newGraph = WeightedGraph(directed = False)
+#Se envia la funcion el grafico desde donde comenzar, una grafica ya al 100%, y la nueva grafica
+prim('Fz',gr, newGraph)
+
+print("Grafica madre")
+#gr.print_graph()
+print("Grafica PRIM")
+newGraph.print_graph()        
