@@ -1,12 +1,11 @@
 """
-    Primera parte. Plotear los puntos de los electrodos de 8
+    Primera parte. Plotear los puntos de los electrodos de 8 y 32 -----------------------------------------------------
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 """
-
 channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
 points3D = [[0,0.71934,0.694658], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0,-0.71934,0.694658], [-0.587427,-0.808524,-0.0348995], [0,-0.999391,-0.0348995], [0.587427,-0.808524,-0.0348995]]
@@ -28,7 +27,9 @@ for i in range(len(points2D)):
 plt.axis('equal')
 plt.show()
 
-#2 parte. Plotear los puntos de los electrodos de 32
+
+
+#2 parte. Plotear los puntos de los electrodos de 32 ----------------------------------------------------------------
 channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
 
 points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
@@ -51,10 +52,14 @@ plt.axis('equal')
 plt.show()
 """
 
+"""
+ETAPA 2: - Análisis de caminos en los grafos de conectividad -------------------------------------------------
+"""
 
 from queue import Queue
 from queue import LifoQueue
 from queue import PriorityQueue
+
 
 class WeightedGraph:
     #Representacion de la grafica con peso. 
@@ -350,210 +355,74 @@ def distancia(xA, yA, zA, xB, yB, zB):
     distancia = np.linalg.norm(punto2 - punto1)
     return distancia
 
-#Crear la grafica
+#Funcion para llenar la grafica
+def graficas(matrizTexto, coordenadasTexto,grafica=WeightedGraph):
+    matriz = np.loadtxt(matrizTexto, dtype=int)
+    coordenadas = np.loadtxt(coordenadasTexto,  dtype=str)
+
+    for i in range(len(coordenadas)):
+        grafica.add_vertex(coordenadas[i][0])
+    
+    for i in range(len(coordenadas)):
+        for x in range(len(matriz[i])):
+            if (matriz[i][x] == 1 and grafica.is_adjacent(coordenadas[i][0],coordenadas[x][0])== False):
+                
+                costo = distancia(float(coordenadas[i][1]),float(coordenadas[i][2]),float(coordenadas[i][3]),float(coordenadas[x][1]),float(coordenadas[x][2]),float(coordenadas[x][3]))
+                grafica.add_edge(coordenadas[i][0], coordenadas[x][0], costo)
+        
+    #grafica.print_graph()
+
+#Funcion para llamar a hacer los caminos, BFD, DFS, Uniform cost
+def prepCaminos(arregloO_D, grafica = WeightedGraph):
+    print("-----BFS-----")
+
+    for x in range(len(arregloO_D)):
+        print("Viaje de ",arregloO_D[x][0]," -> ",arregloO_D[x][1])
+        res = bfs(grafica, arregloO_D[x][0], arregloO_D[x][1])
+        print(res)
+
+    print("-----DFS-----")
+
+    for x in range(len(arregloO_D)):
+        print("Viaje de ",arregloO_D[x][0]," -> ",arregloO_D[x][1])
+        res = dfs(grafica, arregloO_D[x][0], arregloO_D[x][1])
+        print(res)
+
+    print("-----Uniform Cost-----")
+
+    for x in range(len(arregloO_D)):
+        print("Viaje de ",arregloO_D[x][0]," -> ",arregloO_D[x][1])
+        res = uniform_cost(grafica, arregloO_D[x][0], arregloO_D[x][1])
+        print(res)
+
+
+#Crear la graficas
 gr = WeightedGraph(directed = False)
-gr32 = WeightedGraph(directed = False)
 
-#Datos = lectura de matriz de un txt
-matriz8 = np.loadtxt('Lectura_Stef.txt', dtype=int)
-#datos = np.loadtxt('Memoria_Stef.txt', dtype=int)
-#datos = np.loadtxt('Operaciones_Stef.txt', dtype=int)
+#Enviar a la funcion de graficas, el nombre de la matriz que vas a usar, el mapa de electrodos, y la grafica
+#Individuales
+#graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
+#graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
+#graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
 
-#Matriz de conexion, 0 y 1
-matriz32 = np.loadtxt('LecturaS0A.txt', dtype=int)
+graficas('LecturaS0A.txt', 'mapa32electrodos.txt', gr)
+#graficas('MemoriasSOA.txt', 'mapa32electrodos.txt', gr)
+#graficas('OperacionesSOA.txt', 'mapa32electrodos.txt', gr)
 
 
+#Arreglo origen destino, tuplas de donde parte a donde va el camino a explorar
+#Arreglo para los viajes de 8 electrodos
+arregloOD8 = [('Fz','PO8'),('C3','Oz'),('PO7','C4'),('Oz','PO7'),('Cz','Pz')]
+arregloOD32 = [('F7','PO4'),('CP5','O2'),('P4','T7'),('AF3','CP6'),('F8','CP2'),('CP1','FC2'),('F3','O1')]
 
-#DatosE8 = mapa con los nombres y coordenadas de los electrodos
-coordenadasE8 = np.loadtxt('mapa8electrodos.txt',  dtype=str)
-coordenadasE32 = np.loadtxt('mapa32electrodos.txt',  dtype=str)
+#Para ver los caminos se usa la funcion de prepCaminos, 
+#se envia el arregloOD correspondiente y la grafica
 
-#Añadir los vertices
-for i in range(len(coordenadasE8)):
-    gr.add_vertex(coordenadasE8[i][0])
+#prepCaminos(arregloOD8,gr)
+#prepCaminos(arregloOD32,gr)
 
-for i in range(len(coordenadasE32)):
-    gr32.add_vertex(coordenadasE32[i][0])
+#--------------------------------FLOYD-----------------------------------
 
-#Añador las aristas entre los vertices
-for i in range(len(coordenadasE8)):
-    for x in range(len(matriz8[i])):
-        if (matriz8[i][x] == 1 and gr.is_adjacent(coordenadasE8[i][0],coordenadasE8[x][0])== False):
-            
-            costo = distancia(float(coordenadasE8[i][1]),float(coordenadasE8[i][2]),float(coordenadasE8[i][3]),float(coordenadasE8[x][1]),float(coordenadasE8[x][2]),float(coordenadasE8[x][3]))
-            gr.add_edge(coordenadasE8[i][0], coordenadasE8[x][0], costo)
-
-for i in range(len(coordenadasE32)):
-    for x in range(len(matriz32[i])):
-        if (matriz32[i][x] == 1 and gr32.is_adjacent(coordenadasE32[i][0],coordenadasE32[x][0])== False):
-            
-            costo = distancia(float(coordenadasE32[i][1]),float(coordenadasE32[i][2]),float(coordenadasE32[i][3]),float(coordenadasE32[x][1]),float(coordenadasE32[x][2]),float(coordenadasE32[x][3]))
-            gr32.add_edge(coordenadasE32[i][0], coordenadasE32[x][0], costo)
-
-#gr.print_graph()
-#gr32.print_graph()
-
-#Grafos de 8 electrodos
-#BFS
-
-"""
-print("-----BFS-----")
-print("Viaje de Fz a PO8")
-res = bfs(gr, 'Fz', 'PO8')
-print(res)
-
-print("Viaje de C3 a Oz")
-res = bfs(gr, 'C3', 'Oz')
-print(res)
-
-print("Viaje de PO7 a C4")
-res = bfs(gr, 'PO7', 'C4')
-print(res)
-
-print("Viaje de Oz a PO7")
-res = bfs(gr, 'Oz', 'PO7')
-print(res)
-
-print("Viaje de Cz a Pz")
-res = bfs(gr, 'Cz', 'Pz')
-print(res)
-
-#DFS
-print("-----DFS-----")
-print("Viaje de Fz a PO8")
-res = dfs(gr, 'Fz', 'PO8')
-print(res)
-
-print("Viaje de C3 a Oz")
-res = dfs(gr, 'C3', 'Oz')
-print(res)
-
-print("Viaje de PO7 a C4")
-res = dfs(gr, 'PO7', 'C4')
-print(res)
-
-print("Viaje de Oz a PO7")
-res = dfs(gr, 'Oz', 'PO7')
-print(res)
-
-print("Viaje de Cz a Pz")
-res = dfs(gr, 'Cz', 'Pz')
-print(res)
-
-print("-----Uniforn cost-----")
-print("Viaje de Fz a PO8")
-res = uniform_cost(gr, 'Fz', 'PO8')
-print(res)
-
-print("Viaje de C3 a Oz")
-res = uniform_cost(gr, 'C3', 'Oz')
-print(res)
-
-print("Viaje de PO7 a C4")
-res = uniform_cost(gr, 'PO7', 'C4')
-print(res)
-
-print("Viaje de Oz a PO7")
-res = uniform_cost(gr, 'Oz', 'PO7')
-print(res)
-
-print("Viaje de Cz a Pz")
-res = uniform_cost(gr, 'Cz', 'Pz')
-print(res)
-
-#Grafos de 32 electrodos
-#BFS
-print("-----BFS-----")
-print("Viaje de F7 a PO4")
-res = bfs(gr32, 'F7', 'PO4')
-print(res)
-
-print("Viaje de CP5 a O2")
-res = bfs(gr32, 'CP5', '02')
-print(res)
-
-print("Viaje de P4 a T7")
-res = bfs(gr32, 'P4', 'T7')
-print(res)
-
-print("Viaje de AF3 a CP6")
-res = bfs(gr32, 'AF3', 'CP6')
-print(res)
-
-print("Viaje de F8 a CP2")
-res = bfs(gr32, 'F8', 'CP2')
-print(res)
-
-print("Viaje de CP1 a FC2")
-res = bfs(gr32, 'CP1', 'FC2')
-print(res)
-
-print("Viaje de F3 a O1")
-res = bfs(gr32, 'F3', 'O1')
-print(res)
-
-#DFS
-print("-----DFS-----")
-print("Viaje de F7 a PO4")
-res = dfs(gr32, 'F7', 'PO4')
-print(res)
-
-print("Viaje de CP5 a O2")
-res = dfs(gr32, 'CP5', '02')
-print(res)
-
-print("Viaje de P4 a T7")
-res = dfs(gr32, 'P4', 'T7')
-print(res)
-
-print("Viaje de AF3 a CP6")
-res = dfs(gr32, 'AF3', 'CP6')
-print(res)
-
-print("Viaje de F8 a CP2")
-res = dfs(gr32, 'F8', 'CP2')
-print(res)
-
-print("Viaje de CP1 a FC2")
-res = dfs(gr32, 'CP1', 'FC2')
-print(res)
-
-print("Viaje de F3 a O1")
-res = dfs(gr32, 'F3', 'O1')
-print(res)
-
-#Uniform Cost
-print("-----Uniform Cost-----")
-print("Viaje de F7 a PO4")
-res = uniform_cost(gr32, 'F7', 'PO4')
-print(res)
-
-print("Viaje de CP5 a O2")
-res = uniform_cost(gr32, 'CP5', 'O2')
-print(res)
-
-print("Viaje de P4 a T7")
-res = uniform_cost(gr32, 'P4', 'T7')
-print(res)
-
-print("Viaje de AF3 a CP6")
-res = uniform_cost(gr32, 'AF3', 'CP6')
-print(res)
-
-print("Viaje de F8 a CP2")
-res = uniform_cost(gr32, 'F8', 'CP2')
-print(res)
-
-print("Viaje de CP1 a FC2")
-res = uniform_cost(gr32, 'CP1', 'FC2')
-print(res)
-
-print("Viaje de F3 a O1")
-res = uniform_cost(gr32, 'F3', 'O1')
-print(res)
-"""
-
-#------------------------------FLOYD-----------------------------------
 class WeightedGraphFloyd:
     """ 
         Class that is used to represent a weighted graph. Internally, the class uses an adjacency matrix to 
@@ -811,50 +680,33 @@ def floyd_marshall(adjacency_matrix):
                     
     return matrix
 
+def graficas(matrizTexto, coordenadasTexto,grafica=WeightedGraphFloyd):
+    matriz = np.loadtxt(matrizTexto, dtype=int)
+    coordenadas = np.loadtxt(coordenadasTexto,  dtype=str)
 
+    for i in range(len(coordenadas)):
+        grafica.add_vertex(coordenadas[i][0])
+    
+    for i in range(len(coordenadas)):
+        for x in range(len(matriz[i])):
+            if (matriz[i][x] == 1 and grafica.is_adjacent(coordenadas[i][0],coordenadas[x][0])== False):
+                
+                costo = distancia(float(coordenadas[i][1]),float(coordenadas[i][2]),float(coordenadas[i][3]),float(coordenadas[x][1]),float(coordenadas[x][2]),float(coordenadas[x][3]))
+                grafica.add_edge(coordenadas[i][0], coordenadas[x][0], costo)
+        
+    #grafica.print_graph()
 #Crear la grafica
-grFloyd32 = WeightedGraphFloyd(directed = False)
-grFloyd8 = WeightedGraphFloyd(directed = False)
+grFloyd = WeightedGraphFloyd(directed = False)
 
 
 #Matriz de conexion, 0 y 1
-matriz32Floyd = np.loadtxt('LecturaS0A.txt', dtype=int)
-matriz8Floyd = np.loadtxt('Lectura_Stef.txt', dtype=int)
+graficas('Lectura_Stef.txt', 'mapa8electrodos.txt', grFloyd)
+#graficas('Memoria_Stef.txt', 'mapa8electrodos.txt', grFloyd)
+#graficas('Operaciones_Stef.txt', 'mapa8electrodos.txt', grFloyd)
 
+#graficas('LecturaS0A.txt', 'mapa32electrodos.txt', grFloyd)
+#graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', grFloyd)
+#graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', grFloyd)
 
-#DatosE8 = mapa con los nombres y coordenadas de los electrodos
-coordenadasE32Floyd = np.loadtxt('mapa32electrodos.txt',  dtype=str)
-coordenadasE8Floyd = np.loadtxt('mapa8electrodos.txt',  dtype=str)
-
-
-#Añadir los vertices
-
-for i in range(len(coordenadasE32Floyd)):
-    grFloyd32.add_vertex(coordenadasE32Floyd[i][0])
-
-for i in range(len(coordenadasE8Floyd)):
-    grFloyd8.add_vertex(coordenadasE8Floyd[i][0])
-
-
-#Añador las aristas entre los vertices
-
-for i in range(len(coordenadasE32Floyd)):
-    for x in range(len(matriz32Floyd[i])):
-        if (matriz32Floyd[i][x] == 1 and grFloyd32.is_adjacent(coordenadasE32Floyd[i][0],coordenadasE32Floyd[x][0])== False):
-            
-            costo = distancia(float(coordenadasE32Floyd[i][1]),float(coordenadasE32Floyd[i][2]),float(coordenadasE32Floyd[i][3]),float(coordenadasE32Floyd[x][1]),float(coordenadasE32Floyd[x][2]),float(coordenadasE32Floyd[x][3]))
-            grFloyd32.add_edge(coordenadasE32Floyd[i][0], coordenadasE32Floyd[x][0], costo)
-
-for i in range(len(coordenadasE8Floyd)):
-    for x in range(len(matriz8Floyd[i])):
-        if (matriz8Floyd[i][x] == 1 and grFloyd8.is_adjacent(coordenadasE8Floyd[i][0],coordenadasE8Floyd[x][0])== False):
-            
-            costo = distancia(float(coordenadasE8Floyd[i][1]),float(coordenadasE8Floyd[i][2]),float(coordenadasE8Floyd[i][3]),float(coordenadasE8Floyd[x][1]),float(coordenadasE8Floyd[x][2]),float(coordenadasE8Floyd[x][3]))
-            grFloyd8.add_edge(coordenadasE8Floyd[i][0], coordenadasE8Floyd[x][0], costo)
-
-
-print("Length of shortest paths Matriz 32")
-print(floyd_marshall(grFloyd32._adjacency_matrix))
-
-print("Length of shortest paths Matriz 8")
-print(floyd_marshall(grFloyd8._adjacency_matrix))
+print("Length of shortest paths Matriz")
+print(floyd_marshall(grFloyd._adjacency_matrix))
