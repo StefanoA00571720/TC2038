@@ -5,7 +5,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-""" 
+
 
 channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
@@ -28,10 +28,7 @@ for i in range(len(points2D)):
 plt.axis('equal')
 plt.show()
 
-"""
-    
-"""
-2 parte. Plotear los puntos de los electrodos de 32
+#2 parte. Plotear los puntos de los electrodos de 32
 channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
 
 points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
@@ -53,7 +50,6 @@ for i in range(len(points2D)):
 plt.axis('equal')
 plt.show()
 
-"""
 from queue import Queue
 from queue import LifoQueue
 from queue import PriorityQueue
@@ -143,13 +139,11 @@ class WeightedGraph:
 
         elif not self._directed and v1 == v2:
             #La grafica no es dirigida y hay un autociclo
-            x = 0
             print("ALERTA no se puede tener autociclos en una grafica no-dirigida")
 
         elif (v2,e) in self._adjacency_list[v1]:
             #La arista ya existe
-            x = 0
-            #print("ALERTA: la arista de ",v1," a ",v2," con peso :",e," ya existe")
+            print("ALERTA: la arista de ",v1," a ",v2," con peso :",e," ya existe")
 
         else:
             self._adjacency_list[v1].append((v2,e))
@@ -179,7 +173,7 @@ class WeightedGraph:
 
         if v not in self._adjacency_list:
             #El vertice no existe
-            print("ALERTA vertice ",v," no existe")
+            print("ALERTA vertice 123",v," no existe")
             return []
         else:
             return self._adjacency_list[v]
@@ -245,10 +239,10 @@ def bfs(graph:WeightedGraph, v0,  vg):
 
     #Checar si los vrtices no existen
     if v0 not in graph.vertices():
-        print("ALERTA; vertex ",v0," no existe")
+        print("ALERTA;--- vertex ",v0," no existe")
 
     if vg not in graph.vertices():
-        print("ALERTA vertice ",vg," no existe")
+        print("ALERTA -  vertice ",vg," no existe")
 
     #Inicializar frontera
     frontier = Queue()
@@ -269,7 +263,7 @@ def bfs(graph:WeightedGraph, v0,  vg):
 
         #Expandir nodo
         if node.v not in explored_set:
-            adjacent_vertices = gr.adjacent_vertices(node.v)
+            adjacent_vertices = graph.adjacent_vertices(node.v)
             for vertex in adjacent_vertices:
                 frontier.put(TreeNode(node, vertex[0], vertex[1]+ node.c))
 
@@ -303,7 +297,7 @@ def dfs(graph:WeightedGraph, v0, vg):
             return {"Path": node.path(), "Cost":node.c}
 
         if node.v not in explored_set:
-            adjacent_vertices = gr.adjacent_vertices(node.v)
+            adjacent_vertices = graph.adjacent_vertices(node.v)
             for vertex in adjacent_vertices:
                 frontier.put(TreeNode(node, vertex[0], vertex[1]+node.c))
 
@@ -339,7 +333,7 @@ def uniform_cost(graph:WeightedGraph, v0,vg):
 
         #Expandir nodo
         if node.v not in explored_set:
-            adjacent_vertices = gr.adjacent_vertices(node.v)
+            adjacent_vertices = graph.adjacent_vertices(node.v)
             for vertex in adjacent_vertices:
                 cost = vertex[1]+ node.c
                 frontier.put((cost, TreeNode(node, vertex[0], vertex[1]+node.c)))
@@ -356,30 +350,48 @@ def distancia(xA, yA, zA, xB, yB, zB):
 
 #Crear la grafica
 gr = WeightedGraph(directed = False)
+gr32 = WeightedGraph(directed = False)
 
 #Datos = lectura de matriz de un txt
-datos = np.loadtxt('Lectura_Stef.txt', dtype=int)
+matriz8 = np.loadtxt('Lectura_Stef.txt', dtype=int)
 #datos = np.loadtxt('Memoria_Stef.txt', dtype=int)
 #datos = np.loadtxt('Operaciones_Stef.txt', dtype=int)
 
+#Matriz de conexion, 0 y 1
+matriz32 = np.loadtxt('LecturaS0A.txt', dtype=int)
+
+
+
 #DatosE8 = mapa con los nombres y coordenadas de los electrodos
-datosE8 = np.loadtxt('mapa8electrodos.txt',  dtype=str)
+coordenadasE8 = np.loadtxt('mapa8electrodos.txt',  dtype=str)
+coordenadasE32 = np.loadtxt('mapa32electrodos.txt',  dtype=str)
 
 #Añadir los vertices
-for i in range(len(datosE8)):
-    gr.add_vertex(datosE8[i][0])
+for i in range(len(coordenadasE8)):
+    gr.add_vertex(coordenadasE8[i][0])
+
+for i in range(len(coordenadasE32)):
+    gr32.add_vertex(coordenadasE32[i][0])
 
 #Añador las aristas entre los vertices
-for i in range(len(datosE8)):
-    for x in range(len(datos[i])):
-        if (datos[i][x] == 1 and gr.is_adjacent(datosE8[i][0],datosE8[x][0])== False):
+for i in range(len(coordenadasE8)):
+    for x in range(len(matriz8[i])):
+        if (matriz8[i][x] == 1 and gr.is_adjacent(coordenadasE8[i][0],coordenadasE8[x][0])== False):
             
-            costo = distancia(float(datosE8[i][1]),float(datosE8[i][2]),float(datosE8[i][3]),float(datosE8[x][1]),float(datosE8[x][1]),float(datosE8[x][1]))
-            gr.add_edge(datosE8[i][0], datosE8[x][0], costo)
+            costo = distancia(float(coordenadasE8[i][1]),float(coordenadasE8[i][2]),float(coordenadasE8[i][3]),float(coordenadasE8[x][1]),float(coordenadasE8[x][2]),float(coordenadasE8[x][3]))
+            gr.add_edge(coordenadasE8[i][0], coordenadasE8[x][0], costo)
 
+for i in range(len(coordenadasE32)):
+    for x in range(len(matriz32[i])):
+        if (matriz32[i][x] == 1 and gr32.is_adjacent(coordenadasE32[i][0],coordenadasE32[x][0])== False):
+            
+            costo = distancia(float(coordenadasE32[i][1]),float(coordenadasE32[i][2]),float(coordenadasE32[i][3]),float(coordenadasE32[x][1]),float(coordenadasE32[x][2]),float(coordenadasE32[x][3]))
+            gr32.add_edge(coordenadasE32[i][0], coordenadasE32[x][0], costo)
 
 #gr.print_graph()
+#gr32.print_graph()
 
+#Grafos de 8 electrodos
 #BFS
 print("-----BFS-----")
 print("Viaje de Fz a PO8")
@@ -443,4 +455,95 @@ print(res)
 
 print("Viaje de Cz a Pz")
 res = uniform_cost(gr, 'Cz', 'Pz')
+print(res)
+
+#Grafos de 32 electrodos
+#BFS
+print("-----BFS-----")
+print("Viaje de F7 a PO4")
+res = bfs(gr32, 'F7', 'PO4')
+print(res)
+
+print("Viaje de CP5 a O2")
+res = bfs(gr32, 'CP5', '02')
+print(res)
+
+print("Viaje de P4 a T7")
+res = bfs(gr32, 'P4', 'T7')
+print(res)
+
+print("Viaje de AF3 a CP6")
+res = bfs(gr32, 'AF3', 'CP6')
+print(res)
+
+print("Viaje de F8 a CP2")
+res = bfs(gr32, 'F8', 'CP2')
+print(res)
+
+print("Viaje de CP1 a FC2")
+res = bfs(gr32, 'CP1', 'FC2')
+print(res)
+
+print("Viaje de F3 a O1")
+res = bfs(gr32, 'F3', 'O1')
+print(res)
+
+#DFS
+print("-----DFS-----")
+print("Viaje de F7 a PO4")
+res = dfs(gr32, 'F7', 'PO4')
+print(res)
+
+print("Viaje de CP5 a O2")
+res = dfs(gr32, 'CP5', '02')
+print(res)
+
+print("Viaje de P4 a T7")
+res = dfs(gr32, 'P4', 'T7')
+print(res)
+
+print("Viaje de AF3 a CP6")
+res = dfs(gr32, 'AF3', 'CP6')
+print(res)
+
+print("Viaje de F8 a CP2")
+res = dfs(gr32, 'F8', 'CP2')
+print(res)
+
+print("Viaje de CP1 a FC2")
+res = dfs(gr32, 'CP1', 'FC2')
+print(res)
+
+print("Viaje de F3 a O1")
+res = dfs(gr32, 'F3', 'O1')
+print(res)
+
+#Uniform Cost
+print("-----Uniform Cost-----")
+print("Viaje de F7 a PO4")
+res = uniform_cost(gr32, 'F7', 'PO4')
+print(res)
+
+print("Viaje de CP5 a O2")
+res = uniform_cost(gr32, 'CP5', 'O2')
+print(res)
+
+print("Viaje de P4 a T7")
+res = uniform_cost(gr32, 'P4', 'T7')
+print(res)
+
+print("Viaje de AF3 a CP6")
+res = uniform_cost(gr32, 'AF3', 'CP6')
+print(res)
+
+print("Viaje de F8 a CP2")
+res = uniform_cost(gr32, 'F8', 'CP2')
+print(res)
+
+print("Viaje de CP1 a FC2")
+res = uniform_cost(gr32, 'CP1', 'FC2')
+print(res)
+
+print("Viaje de F3 a O1")
+res = uniform_cost(gr32, 'F3', 'O1')
 print(res)
