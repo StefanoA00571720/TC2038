@@ -421,6 +421,7 @@ arregloOD32 = [('F7','PO4'),('CP5','O2'),('P4','T7'),('AF3','CP6'),('F8','CP2'),
 #prepCaminos(arregloOD8,gr)
 #prepCaminos(arregloOD32,gr)
 
+
 #--------------------------------FLOYD-----------------------------------
 
 class WeightedGraphFloyd:
@@ -711,6 +712,8 @@ graficas('Operaciones_Stef.txt', 'mapa8electrodos.txt', grFloyd)
 print("Length of shortest paths Matriz")
 #print(floyd_marshall(grFloyd._adjacency_matrix))
 
+#----------------------------------------------------------------------------------
+#Etapa 3 - Análisis de árboles de mínima expansión de los grafos de conectividad
 def prim(v0, graph=WeightedGraph, newGraph = WeightedGraph):
     
     cost = 0
@@ -766,7 +769,94 @@ newGraph = WeightedGraph(directed = False)
 #Se envia la funcion el grafico desde donde comenzar, una grafica ya al 100%, y la nueva grafica
 prim('Fz',gr, newGraph)
 
-print("Grafica madre")
+#print("Grafica madre")
 #gr.print_graph()
-print("Grafica PRIM")
-newGraph.print_graph()        
+#print("Grafica PRIM")
+#newGraph.print_graph()
+
+#-----------------------------------------------------------------------------------------
+#Etapa 4 - Cascos convexos de los vértices de los árboles de mínima expansión
+
+import math
+
+#Funcion para calcular el angulo entre 2 puntos, solo se considera x,y
+def calcular_angulo_entre_puntos(xA,yA,xB,yB):
+
+    angulo_rad = math.atan2(yB - yA, xB - xA)
+    angulo_deg = math.degrees(angulo_rad)
+
+    return angulo_deg
+
+#Funcion para calcular si el giro es positivo
+def giro(coordenadas, a,b,c):
+
+    giros = (  (float(coordenadas[b][1]) - float(coordenadas[a][1])) * 
+        (float(coordenadas[c][2]) - float(coordenadas[a][2])) 
+        -
+        (float(coordenadas[b][2]) - float(coordenadas[a][2])) * 
+        (float(coordenadas[c][1]) - float(coordenadas[a][1]) )
+        )
+    return giros
+
+#Funcion para obtener el casco convexo
+#Se necesita el texto de las coordenadas y una grafica 
+def graham(coordenadasTexto, graph=WeightedGraph):
+
+    #Se leen el archivo para obtener los nombres y coordenadas
+    coordenadas = np.loadtxt(coordenadasTexto,  dtype=str)
+
+    #Se inicializan un par de variables en infinito y menos infinito
+    minY = float('inf')
+    minX = float('-inf')
+
+    #Pivote temporal
+    pivote = -1
+
+    #Se busca el pivote que este más abajo hasta la derecha
+    for i in range(len(coordenadas)):
+        if (float(coordenadas[i][2]) <= minY and float(coordenadas[i][1]) > minX):
+            minY = float(coordenadas[i][2])
+            pivote = i
+    
+    #Se obtiene y se ordena la lista de los angulos en comparacion al pivote
+    listaAngulos = []
+    for x in range(len(coordenadas)):
+        if x != pivote:
+            angulo = calcular_angulo_entre_puntos(float(coordenadas[pivote][1]),float(coordenadas[pivote][2]),float(coordenadas[x][1]),float(coordenadas[x][2]))
+            z = float(coordenadas[pivote][1])
+            distancia = math.sqrt((float(coordenadas[x][1]) - float(coordenadas[pivote][1]))**2 + (float(coordenadas[x][2]) - float(coordenadas[pivote][2]))**2)
+            listaAngulos.append((angulo,x, distancia))
+
+    #angulo, vertice 
+    listaAngulos = sorted(listaAngulos, key = lambda x: (x[0], x[2]))
+
+    casco = [pivote, listaAngulos[0][1]]
+    
+ 
+    for s in listaAngulos[1:]:
+        x = s[1]
+        while giro(coordenadas, casco[-2], casco[-1],x) < 0:
+            del casco[-1]
+            if len(casco)<2:
+                break
+        
+        casco.append(x)
+    return casco
+
+#Funcion para graficar los puntos dados por el algoritmo de graham4+
+#Se necesita el texto de donde salen las coordenadas, y el return que da la funcion de graham
+def plotGraham(mapatxt,hull):
+    coordenadas = np.loadtxt(mapatxt,  dtype=str)
+    x = []
+    y = []
+
+    for i in range(len(coordenadas)):
+        if i in hull:
+            x.append(float(coordenadas[i][1]))
+            y.append(float(coordenadas[i][2]))
+    plt.scatter(x,y)
+    plt.show()
+    
+#Llamar a las funciones para hacer los cascos convexos
+grahamPoints = graham('mapa8electrodos.txt',newGraph)
+plotGraham('mapa8electrodos.txt', grahamPoints)
