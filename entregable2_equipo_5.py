@@ -703,13 +703,13 @@ grFloyd = WeightedGraphFloyd(directed = False)
 #Matriz de conexion, 0 y 1
 #graficas('Lectura_Stef.txt', 'mapa8electrodos.txt', grFloyd)
 #graficas('Memoria_Stef.txt', 'mapa8electrodos.txt', grFloyd)
-graficas('Operaciones_Stef.txt', 'mapa8electrodos.txt', grFloyd)
+#graficas('Operaciones_Stef.txt', 'mapa8electrodos.txt', grFloyd)
 
 #graficas('LecturaS0A.txt', 'mapa32electrodos.txt', grFloyd)
 #graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', grFloyd)
 #graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', grFloyd)
 
-print("Length of shortest paths Matriz")
+#print("Length of shortest paths Matriz")
 #print(floyd_marshall(grFloyd._adjacency_matrix))
 
 #----------------------------------------------------------------------------------
@@ -767,7 +767,7 @@ def prim(v0, graph=WeightedGraph, newGraph = WeightedGraph):
 #Para prim se tiene que crear una nueva grafica que se llenara con los valores ddel arbol minimo
 newGraph = WeightedGraph(directed = False)
 #Se envia la funcion el grafico desde donde comenzar, una grafica ya al 100%, y la nueva grafica
-prim('Fz',gr, newGraph)
+#prim('Fz',gr, newGraph)
 
 #print("Grafica madre")
 #gr.print_graph()
@@ -858,5 +858,42 @@ def plotGraham(mapatxt,hull):
     plt.show()
     
 #Llamar a las funciones para hacer los cascos convexos
-grahamPoints = graham('mapa8electrodos.txt',newGraph)
-plotGraham('mapa8electrodos.txt', grahamPoints)
+#grahamPoints = graham('mapa8electrodos.txt',newGraph)
+#plotGraham('mapa8electrodos.txt', grahamPoints)
+
+import numpy as np
+import matplotlib as mpl
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+from scipy.spatial import Voronoi, voronoi_plot_2d
+
+# generate data/speed values
+
+coordenadas = np.loadtxt('mapa8electrodos.txt', dtype=float, usecols=(1, 2))
+nombres = np.loadtxt('mapa8electrodos.txt', dtype=str, usecols=(0))
+
+aristas = []
+for x in range(len(nombres)):
+    vecinos = gr.adjacent_vertices(nombres[x])
+    aristas.append(len(vecinos))
+
+
+# generate Voronoi tessellation
+vor = Voronoi(coordenadas)
+
+# find min/max values for normalization
+minima = min(aristas)
+maxima = max(aristas)
+
+# normalize chosen colormap
+norm = mpl.colors.Normalize(vmin=minima, vmax=maxima, clip=True)
+mapper = cm.ScalarMappable(norm=norm, cmap=cm.Blues_r)
+
+# plot Voronoi diagram, and fill finite regions with color mapped from speed value
+voronoi_plot_2d(vor, show_points=True, show_vertices=False, s=1)
+for r in range(len(vor.point_region)):
+    region = vor.regions[vor.point_region[r]]
+    if not -1 in region:
+        polygon = [vor.vertices[i] for i in region]
+        plt.fill(*zip(*polygon), color=mapper.to_rgba(aristas[r]))
+plt.show()
