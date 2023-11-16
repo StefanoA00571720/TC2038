@@ -1,11 +1,10 @@
 """
     Primera parte. Plotear los puntos de los electrodos de 8 y 32 -----------------------------------------------------
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 
-"""
+
 channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
 points3D = [[0,0.71934,0.694658], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0,-0.71934,0.694658], [-0.587427,-0.808524,-0.0348995], [0,-0.999391,-0.0348995], [0.587427,-0.808524,-0.0348995]]
@@ -26,7 +25,6 @@ for i in range(len(points2D)):
     
 plt.axis('equal')
 plt.show()
-
 
 
 #2 parte. Plotear los puntos de los electrodos de 32 ----------------------------------------------------------------
@@ -50,7 +48,7 @@ for i in range(len(points2D)):
 
 plt.axis('equal')
 plt.show()
-"""
+
 
 """
 ETAPA 2: - Análisis de caminos en los grafos de conectividad -------------------------------------------------
@@ -401,11 +399,11 @@ gr = WeightedGraph(directed = False)
 
 #Enviar a la funcion de graficas, el nombre de la matriz que vas a usar, el mapa de electrodos, y la grafica
 #Individuales
-graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
+#graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
 #graficas('Memoria_Stef.txt','mapa8electrodos.txt',gr)
 #graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
 
-#graficas('LecturaS0A.txt', 'mapa32electrodos.txt', gr)
+graficas('LecturaS0A.txt', 'mapa32electrodos.txt', gr)
 #graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', gr)
 #graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', gr)
 
@@ -869,8 +867,8 @@ from scipy.spatial import Voronoi, voronoi_plot_2d
 
 # generate data/speed values
 
-coordenadas = np.loadtxt('mapa8electrodos.txt', dtype=float, usecols=(1, 2))
-nombres = np.loadtxt('mapa8electrodos.txt', dtype=str, usecols=(0))
+coordenadas = np.loadtxt('mapa32electrodos.txt', dtype=float, usecols=(1, 2))
+nombres = np.loadtxt('mapa32electrodos.txt', dtype=str, usecols=(0))
 
 aristas = []
 for x in range(len(nombres)):
@@ -891,9 +889,12 @@ mapper = cm.ScalarMappable(norm=norm, cmap=cm.Blues_r)
 
 # plot Voronoi diagram, and fill finite regions with color mapped from speed value
 voronoi_plot_2d(vor, show_points=True, show_vertices=False, s=1)
+
 for r in range(len(vor.point_region)):
     region = vor.regions[vor.point_region[r]]
     if not -1 in region:
         polygon = [vor.vertices[i] for i in region]
         plt.fill(*zip(*polygon), color=mapper.to_rgba(aristas[r]))
+circle = plt.Circle((0,0),1, color = 'r', alpha = 0.25, fill = False)
+plt.gca().add_patch(circle)
 plt.show()
