@@ -1005,7 +1005,7 @@ gr = WeightedGraph(directed = False)
 #8 electerodos, las personales
 #graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
 #graficas('Memoria_Stef.txt','mapa8electrodos.txt',gr)
-graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
+graficas('Operaciones_Stef.txt','mapa8electrodos.txt',gr)
 
 #Las de 32 electrodos
 #graficas('LecturaS0A.txt', 'mapa32electrodos.txt', gr)
