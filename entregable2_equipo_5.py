@@ -4,50 +4,78 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+def graficasCaminos8(caminos):
+    channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
-channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
+    points3D = [[0,0.71934,0.694658], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0,-0.71934,0.694658], [-0.587427,-0.808524,-0.0348995], [0,-0.999391,-0.0348995], [0.587427,-0.808524,-0.0348995]]
+    points3D = np.array(points3D)
 
-points3D = [[0,0.71934,0.694658], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0,-0.71934,0.694658], [-0.587427,-0.808524,-0.0348995], [0,-0.999391,-0.0348995], [0.587427,-0.808524,-0.0348995]]
-points3D = np.array(points3D)
+    r = np.sqrt(points3D[:,0]**2 + points3D[:,1]**2 + points3D[:,2]**2)
+    t = r/(r + points3D[:,2])
+    x = r*points3D[:,0]
+    y = r*points3D[:,1]
+    points2D = np.column_stack((x,y))
 
-r = np.sqrt(points3D[:,0]**2 + points3D[:,1]**2 + points3D[:,2]**2)
-t = r/(r + points3D[:,2])
-x = r*points3D[:,0]
-y = r*points3D[:,1]
-points2D = np.column_stack((x,y))
+    circle = plt.Circle((0,0),1, color = 'r', alpha = 0.25, fill = False)
+    plt.scatter(points2D[:,0], points2D[:,1])
+    plt.gca().add_patch(circle)
 
-circle = plt.Circle((0,0),1, color = 'r', alpha = 0.25, fill = False)
-plt.scatter(points2D[:,0], points2D[:,1])
-plt.gca().add_patch(circle)
+    for i in range(len(points2D)):
+        plt.text(points2D[i,0]-0.02, points2D[i,1]+0.025, channels[i])
 
-for i in range(len(points2D)):
-    plt.text(points2D[i,0]-0.02, points2D[i,1]+0.025, channels[i])
+    index = []
+
+    for x in caminos:
+        index.append(channels.index(x))
     
-plt.axis('equal')
-plt.show()
+    print("index : ",index)
+    
+
+    # Resaltar la aristas
+   
+    for i in range (len(index)-1):
+        plt.plot([points2D[index[i], 0], points2D[index[i+1], 0]],
+                [points2D[index[i], 1], points2D[index[i+1], 1]],
+                color='blue', linestyle='--', linewidth=2)    
+        
+    plt.axis('equal')
+    plt.show()
 
 
 #2 parte. Plotear los puntos de los electrodos de 32 ----------------------------------------------------------------
-channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
 
-points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
-points3D = np.array(points3D)
+def graficasCaminos32(caminos):
+    channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
 
-r = np.sqrt(points3D[:,0]**2 + points3D[:,1]**2 + points3D[:,2]**2)
-t = r/(r + points3D[:,2])
-x = r*points3D[:,0]
-y = r*points3D[:,1]
-points2D = np.column_stack((x,y))
+    points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
+    points3D = np.array(points3D)
 
-circle = plt.Circle((0,0),1, color = 'r', alpha = 0.25, fill = False)
-plt.scatter(points2D[:,0], points2D[:,1])
-plt.gca().add_patch(circle)
+    r = np.sqrt(points3D[:,0]**2 + points3D[:,1]**2 + points3D[:,2]**2)
+    t = r/(r + points3D[:,2])
+    x = r*points3D[:,0]
+    y = r*points3D[:,1]
+    points2D = np.column_stack((x,y))
 
-for i in range(len(points2D)):
-    plt.text(points2D[i,0]-0.02, points2D[i,1]+0.025, channels[i])
+    circle = plt.Circle((0,0),1, color = 'r', alpha = 0.25, fill = False)
+    plt.scatter(points2D[:,0], points2D[:,1])
+    plt.gca().add_patch(circle)
 
-plt.axis('equal')
-plt.show()
+    for i in range(len(points2D)):
+        plt.text(points2D[i,0]-0.02, points2D[i,1]+0.025, channels[i])
+    
+    index = []
+    for x in caminos:
+        index.append(channels.index(x))
+    
+
+    # Resaltar la arista entre Fz y PO8
+    for i in range (len(index)-1):
+        plt.plot([points2D[index[i], 0], points2D[index[i+1], 0]],
+                [points2D[index[i], 1], points2D[index[i+1], 1]],
+                color='blue', linestyle='--', linewidth=2)
+
+    plt.axis('equal')
+    plt.show()
 
 
 """
@@ -263,7 +291,7 @@ def bfs(graph:WeightedGraph, v0,  vg):
 
         #Checar si el nodo es el destino
         if node.v == vg:
-            return{"Path ":node.path(), "Cost":node.c}
+            return{"Path":node.path(), "Cost":node.c}
 
         #Expandir nodo
         if node.v not in explored_set:
@@ -371,12 +399,17 @@ def graficas(matrizTexto, coordenadasTexto,grafica=WeightedGraph):
     #grafica.print_graph()
 
 #Funcion para llamar a hacer los caminos, BFD, DFS, Uniform cost
-def prepCaminos(arregloO_D, grafica = WeightedGraph):
+def prepCaminos(arregloO_D, graficar, grafica = WeightedGraph):
     print("-----BFS-----")
 
     for x in range(len(arregloO_D)):
         print("Viaje de ",arregloO_D[x][0]," -> ",arregloO_D[x][1])
         res = bfs(grafica, arregloO_D[x][0], arregloO_D[x][1])
+        if res != None:
+            if graficar == 0:
+                graficasCaminos8(res["Path"])
+            else :
+                graficasCaminos32(res["Path"])
         print(res)
 
     print("-----DFS-----")
@@ -384,6 +417,11 @@ def prepCaminos(arregloO_D, grafica = WeightedGraph):
     for x in range(len(arregloO_D)):
         print("Viaje de ",arregloO_D[x][0]," -> ",arregloO_D[x][1])
         res = dfs(grafica, arregloO_D[x][0], arregloO_D[x][1])
+        if res != None:
+            if graficar == 0:
+                graficasCaminos8(res["Path"])
+            else :
+                graficasCaminos32(res["Path"])
         print(res)
 
     print("-----Uniform Cost-----")
@@ -391,7 +429,88 @@ def prepCaminos(arregloO_D, grafica = WeightedGraph):
     for x in range(len(arregloO_D)):
         print("Viaje de ",arregloO_D[x][0]," -> ",arregloO_D[x][1])
         res = uniform_cost(grafica, arregloO_D[x][0], arregloO_D[x][1])
+        if res != None:
+            if graficar == 0:
+                graficasCaminos8(res["Path"])
+            else :
+                graficasCaminos32(res["Path"])
         print(res)
+
+def graficarGraficas8(grafica = WeightedGraph):
+    channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
+
+    points3D = [[0,0.71934,0.694658], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0,-0.71934,0.694658], [-0.587427,-0.808524,-0.0348995], [0,-0.999391,-0.0348995], [0.587427,-0.808524,-0.0348995]]
+    points3D = np.array(points3D)
+
+    r = np.sqrt(points3D[:,0]**2 + points3D[:,1]**2 + points3D[:,2]**2)
+    t = r/(r + points3D[:,2])
+    x = r*points3D[:,0]
+    y = r*points3D[:,1]
+    points2D = np.column_stack((x,y))
+
+    circle = plt.Circle((0,0),1, color = 'r', alpha = 0.25, fill = False)
+    plt.scatter(points2D[:,0], points2D[:,1])
+    plt.gca().add_patch(circle)
+
+    for i in range(len(points2D)):
+        plt.text(points2D[i,0]-0.02, points2D[i,1]+0.025, channels[i])
+
+    index = []
+
+    vertices = grafica.vertices()
+
+    for x in range(len(vertices)):
+        numeroV =  channels.index(vertices[x])
+        index = grafica.adjacent_vertices(vertices[x])
+        if len(index) == 0:
+            continue
+        for y in range(len(index)):
+            numeroI = channels.index(index[y][0])
+            plt.plot(
+                [points2D[numeroV, 0],points2D[numeroI, 0]],
+                [points2D[numeroV, 1], points2D[numeroI, 1]],
+                color='blue', linestyle='--', linewidth=2
+            )
+        
+    plt.axis('equal')
+    plt.show()
+
+def graficarGraficas32(grafica = WeightedGraph):
+    channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
+
+    points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
+    points3D = np.array(points3D)
+
+    r = np.sqrt(points3D[:,0]**2 + points3D[:,1]**2 + points3D[:,2]**2)
+    t = r/(r + points3D[:,2])
+    x = r*points3D[:,0]
+    y = r*points3D[:,1]
+    points2D = np.column_stack((x,y))
+
+    circle = plt.Circle((0,0),1, color = 'r', alpha = 0.25, fill = False)
+    plt.scatter(points2D[:,0], points2D[:,1])
+    plt.gca().add_patch(circle)
+
+    for i in range(len(points2D)):
+        plt.text(points2D[i,0]-0.02, points2D[i,1]+0.025, channels[i])
+    
+        index = []
+
+    vertices = grafica.vertices()
+
+    for x in range(len(vertices)):
+        numeroV =  channels.index(vertices[x])
+        index = grafica.adjacent_vertices(vertices[x])
+        for y in range(len(index)):
+            numeroI = channels.index(index[y][0])
+            plt.plot(
+                [points2D[numeroV, 0],points2D[numeroI, 0]],
+                [points2D[numeroV, 1], points2D[numeroI, 1]],
+                color='blue', linestyle='--', linewidth=2
+            )
+
+    plt.axis('equal')
+    plt.show()
 
 
 #Crear la graficas
@@ -416,8 +535,12 @@ arregloOD32 = [('F7','PO4'),('CP5','O2'),('P4','T7'),('AF3','CP6'),('F8','CP2'),
 #Para ver los caminos se usa la funcion de prepCaminos, 
 #se envia el arregloOD correspondiente y la grafica
 
-#prepCaminos(arregloOD8,gr)
-#prepCaminos(arregloOD32,gr)
+#graficarGraficas8(gr)
+
+graficarGraficas32(gr)
+
+#prepCaminos(arregloOD8,0,gr)
+#prepCaminos(arregloOD32,1,gr)
 
 
 #--------------------------------FLOYD-----------------------------------
@@ -765,12 +888,13 @@ def prim(v0, graph=WeightedGraph, newGraph = WeightedGraph):
 #Para prim se tiene que crear una nueva grafica que se llenara con los valores ddel arbol minimo
 newGraph = WeightedGraph(directed = False)
 #Se envia la funcion el grafico desde donde comenzar, una grafica ya al 100%, y la nueva grafica
-#prim('Fz',gr, newGraph)
+prim('Fz',gr, newGraph)
 
-#print("Grafica madre")
-#gr.print_graph()
-#print("Grafica PRIM")
-#newGraph.print_graph()
+print("Grafica madre")
+gr.print_graph()
+print("Grafica PRIM")
+graficarGraficas32(newGraph)
+newGraph.print_graph()
 
 #-----------------------------------------------------------------------------------------
 #Etapa 4 - Cascos convexos de los vértices de los árboles de mínima expansión
@@ -856,8 +980,8 @@ def plotGraham(mapatxt,hull):
     plt.show()
     
 #Llamar a las funciones para hacer los cascos convexos
-#grahamPoints = graham('mapa8electrodos.txt',newGraph)
-#plotGraham('mapa8electrodos.txt', grahamPoints)
+grahamPoints = graham('mapa8electrodos.txt',newGraph)
+plotGraham('mapa8electrodos.txt', grahamPoints)
 
 import numpy as np
 import matplotlib as mpl
