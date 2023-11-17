@@ -1,8 +1,35 @@
-"""
-    Primera parte. Plotear los puntos de los electrodos de 8 y 32 -----------------------------------------------------
-"""
+#Equipo 2, Stefano, Fabian, Juan, Sebastian
+
+#Librerias
+#Libreris para la parte 1
 import numpy as np
 import matplotlib.pyplot as plt
+
+#Libreris para la parte 2
+
+from queue import Queue
+from queue import LifoQueue
+from queue import PriorityQueue
+
+#Libreris para la parte 3
+
+
+import math
+
+#Librerias para la parte 5
+
+#import numpy as np
+import matplotlib as mpl
+import matplotlib.cm as cm
+#import matplotlib.pyplot as plt
+from scipy.spatial import Voronoi, voronoi_plot_2d
+
+
+"""
+Etapa 1 - Registro de señales de EEG
+"""
+
+#Funcion para graficar los recorridos de la matriz de 8 electrodos
 
 def graficasCaminos8(caminos):
     channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
@@ -42,7 +69,7 @@ def graficasCaminos8(caminos):
     plt.show()
 
 
-#2 parte. Plotear los puntos de los electrodos de 32 ----------------------------------------------------------------
+#Funcion para graficar los recorridos de la matriz de 32 electrodos
 
 def graficasCaminos32(caminos):
     channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
@@ -77,15 +104,9 @@ def graficasCaminos32(caminos):
     plt.axis('equal')
     plt.show()
 
-
 """
-ETAPA 2: - Análisis de caminos en los grafos de conectividad -------------------------------------------------
+ETAPA 2: - Análisis de caminos en los grafos de conectividad
 """
-
-from queue import Queue
-from queue import LifoQueue
-from queue import PriorityQueue
-
 
 class WeightedGraph:
     #Representacion de la grafica con peso. 
@@ -265,6 +286,8 @@ class TreeNode:
             node = node.parent 
         return path
 
+
+#Funciones para obtener los caminos
 def bfs(graph:WeightedGraph, v0,  vg):
     #Recorrido en anchura (Breadth-first), de v0 a vg
     #Regresa una tupla con el camino de vi a vg y el costo, en caso de no existir regresa null
@@ -400,6 +423,8 @@ def graficas(matrizTexto, coordenadasTexto,grafica=WeightedGraph):
 
 #Funcion para llamar a hacer los caminos, BFD, DFS, Uniform cost
 def prepCaminos(arregloO_D, graficar, grafica = WeightedGraph):
+    print("-----Recorridos de grafos-----")
+    
     print("-----BFS-----")
 
     for x in range(len(arregloO_D)):
@@ -436,6 +461,7 @@ def prepCaminos(arregloO_D, graficar, grafica = WeightedGraph):
                 graficasCaminos32(res["Path"])
         print(res)
 
+#Funciones para graficar las graficas con todos sus caminos
 def graficarGraficas8(grafica = WeightedGraph):
     channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
@@ -511,37 +537,6 @@ def graficarGraficas32(grafica = WeightedGraph):
 
     plt.axis('equal')
     plt.show()
-
-
-#Crear la graficas
-gr = WeightedGraph(directed = False)
-
-#Enviar a la funcion de graficas, el nombre de la matriz que vas a usar, el mapa de electrodos, y la grafica
-#Individuales
-#graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
-#graficas('Memoria_Stef.txt','mapa8electrodos.txt',gr)
-#graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
-
-graficas('LecturaS0A.txt', 'mapa32electrodos.txt', gr)
-#graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', gr)
-#graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', gr)
-
-
-#Arreglo origen destino, tuplas de donde parte a donde va el camino a explorar
-#Arreglo para los viajes de 8 electrodos
-arregloOD8 = [('Fz','PO8'),('C3','Oz'),('PO7','C4'),('Oz','PO7'),('Cz','Pz')]
-arregloOD32 = [('F7','PO4'),('CP5','O2'),('P4','T7'),('AF3','CP6'),('F8','CP2'),('CP1','FC2'),('F3','O1')]
-
-#Para ver los caminos se usa la funcion de prepCaminos, 
-#se envia el arregloOD correspondiente y la grafica
-
-#graficarGraficas8(gr)
-
-graficarGraficas32(gr)
-
-#prepCaminos(arregloOD8,0,gr)
-#prepCaminos(arregloOD32,1,gr)
-
 
 #--------------------------------FLOYD-----------------------------------
 
@@ -787,6 +782,8 @@ def floyd_marshall(adjacency_matrix):
         return: A matrix with the length of the shortest paths between vertices of 
         the graph.
     """
+
+    print("Floyd")
     
     BIG_NUMBER = 100000000
     n = len(adjacency_matrix)   
@@ -803,6 +800,7 @@ def floyd_marshall(adjacency_matrix):
     return matrix
 
 def graficas(matrizTexto, coordenadasTexto,grafica=WeightedGraphFloyd):
+    print(matrizTexto)
     matriz = np.loadtxt(matrizTexto, dtype=int)
     coordenadas = np.loadtxt(coordenadasTexto,  dtype=str)
 
@@ -817,24 +815,10 @@ def graficas(matrizTexto, coordenadasTexto,grafica=WeightedGraphFloyd):
                 grafica.add_edge(coordenadas[i][0], coordenadas[x][0], costo)
         
     #grafica.print_graph()
-#Crear la grafica
-grFloyd = WeightedGraphFloyd(directed = False)
 
-
-#Matriz de conexion, 0 y 1
-#graficas('Lectura_Stef.txt', 'mapa8electrodos.txt', grFloyd)
-#graficas('Memoria_Stef.txt', 'mapa8electrodos.txt', grFloyd)
-#graficas('Operaciones_Stef.txt', 'mapa8electrodos.txt', grFloyd)
-
-#graficas('LecturaS0A.txt', 'mapa32electrodos.txt', grFloyd)
-#graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', grFloyd)
-#graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', grFloyd)
-
-#print("Length of shortest paths Matriz")
-#print(floyd_marshall(grFloyd._adjacency_matrix))
-
-#----------------------------------------------------------------------------------
+"""
 #Etapa 3 - Análisis de árboles de mínima expansión de los grafos de conectividad
+"""
 def prim(v0, graph=WeightedGraph, newGraph = WeightedGraph):
     
     cost = 0
@@ -885,21 +869,9 @@ def prim(v0, graph=WeightedGraph, newGraph = WeightedGraph):
     return(selected, cost)
 
 
-#Para prim se tiene que crear una nueva grafica que se llenara con los valores ddel arbol minimo
-newGraph = WeightedGraph(directed = False)
-#Se envia la funcion el grafico desde donde comenzar, una grafica ya al 100%, y la nueva grafica
-prim('Fz',gr, newGraph)
-
-print("Grafica madre")
-gr.print_graph()
-print("Grafica PRIM")
-graficarGraficas32(newGraph)
-newGraph.print_graph()
-
-#-----------------------------------------------------------------------------------------
-#Etapa 4 - Cascos convexos de los vértices de los árboles de mínima expansión
-
-import math
+"""
+Etapa 4 - Cascos convexos de los vértices de los árboles de mínima expansión
+"""
 
 #Funcion para calcular el angulo entre 2 puntos, solo se considera x,y
 def calcular_angulo_entre_puntos(xA,yA,xB,yB):
@@ -978,47 +950,125 @@ def plotGraham(mapatxt,hull):
             y.append(float(coordenadas[i][2]))
     plt.scatter(x,y)
     plt.show()
-    
+
+
+"""
+Etapa 5 - Representación del grado de cada arista con diagramas de Voronoi
+"""
+
+def voronoi(coordenadastxt, gr = WeightedGraph):
+    coordenadas = np.loadtxt(coordenadastxt, dtype=float, usecols=(1, 2))
+    nombres = np.loadtxt(coordenadastxt, dtype=str, usecols=(0))
+
+    aristas = []
+    for x in range(len(nombres)):
+        vecinos = gr.adjacent_vertices(nombres[x])
+        aristas.append(len(vecinos))
+
+
+    # generate Voronoi tessellation
+    vor = Voronoi(coordenadas)
+
+    # find min/max values for normalization
+    minima = min(aristas)
+    maxima = max(aristas)
+
+    # normalize chosen colormap
+    norm = mpl.colors.Normalize(vmin=minima, vmax=maxima, clip=True)
+    mapper = cm.ScalarMappable(norm=norm, cmap=cm.Blues_r)
+
+    # plot Voronoi diagram, and fill finite regions with color mapped from speed value
+    voronoi_plot_2d(vor, show_points=True, show_vertices=False, s=1)
+
+    for r in range(len(vor.point_region)):
+        region = vor.regions[vor.point_region[r]]
+        if not -1 in region:
+            polygon = [vor.vertices[i] for i in region]
+            plt.fill(*zip(*polygon), color=mapper.to_rgba(aristas[r]))
+    circle = plt.Circle((0,0),1, color = 'r', alpha = 0.25, fill = False)
+    plt.gca().add_patch(circle)
+    plt.show()
+
+
+"""
+Etapa 6 - Reporte
+Llamar a las funciones
+"""
+
+#Etapa 1 -----------------------------------------------------------------
+#Crear la grafica
+gr = WeightedGraph(directed = False)
+
+#Enviar a la funcion de graficas, el nombre de la matriz que vas a usar, el mapa de electrodos, y la grafica
+#Esto sirve para llenar la grafica de sus vectores y aristas
+
+#8 electerodos, las personales
+#graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
+#graficas('Memoria_Stef.txt','mapa8electrodos.txt',gr)
+graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
+
+#Las de 32 electrodos
+#graficas('LecturaS0A.txt', 'mapa32electrodos.txt', gr)
+#graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', gr)
+#graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', gr)
+
+
+#Arreglo origen destino, tuplas de donde parte a donde va el camino a explorar
+#Arreglo para los viajes de 8 electrodos
+arregloOD8 = [('Fz','PO8'),('C3','Oz'),('PO7','C4'),('Oz','PO7'),('Cz','Pz')]
+
+#Arreglo para los viajes de 32 electrodos
+arregloOD32 = [('F7','PO4'),('CP5','O2'),('P4','T7'),('AF3','CP6'),('F8','CP2'),('CP1','FC2'),('F3','O1')]
+
+
+#Para graficar la grafica junto con sus caminos
+graficarGraficas8(gr)
+#graficarGraficas32(gr)
+
+"""
+    Para ver los caminos se usa la funcion de prepCaminos
+    se envia el arregloOD correspondiente y la grafica
+    Para ver los caminos, 0 grafica de 8, 1 grafica de 32
+"""
+
+prepCaminos(arregloOD8,0,gr)
+#prepCaminos(arregloOD32,1,gr)
+
+grFloyd = WeightedGraphFloyd(directed = False)
+
+#Matriz de conexion, 0 y 1
+graficas('Lectura_Stef.txt', 'mapa8electrodos.txt', grFloyd)
+#graficas('Memoria_Stef.txt', 'mapa8electrodos.txt', grFloyd)
+#graficas('Operaciones_Stef.txt', 'mapa8electrodos.txt', grFloyd)
+
+#graficas('LecturaS0A.txt', 'mapa32electrodos.txt', grFloyd)
+#graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', grFloyd)
+#graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', grFloyd)
+
+print("Length of shortest paths Matriz Floyd")
+print(floyd_marshall(grFloyd._adjacency_matrix))
+
+#Parte 3
+
+#Para prim se tiene que crear una nueva grafica que se llenara con los valores ddel arbol minimo
+newGraph = WeightedGraph(directed = False)
+#Se envia la funcion el grafico desde donde comenzar, una grafica ya al 100%, y la nueva grafica
+prim('Fz',gr, newGraph)
+
+print("Grafica madre")
+gr.print_graph()
+
+print("Grafica PRIM")
+graficarGraficas8(newGraph)
+#graficarGraficas32(newGraph)
+
+newGraph.print_graph()
+
+#Parte 4
 #Llamar a las funciones para hacer los cascos convexos
 grahamPoints = graham('mapa8electrodos.txt',newGraph)
 plotGraham('mapa8electrodos.txt', grahamPoints)
 
-import numpy as np
-import matplotlib as mpl
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
-from scipy.spatial import Voronoi, voronoi_plot_2d
-
-# generate data/speed values
-
-coordenadas = np.loadtxt('mapa32electrodos.txt', dtype=float, usecols=(1, 2))
-nombres = np.loadtxt('mapa32electrodos.txt', dtype=str, usecols=(0))
-
-aristas = []
-for x in range(len(nombres)):
-    vecinos = gr.adjacent_vertices(nombres[x])
-    aristas.append(len(vecinos))
-
-
-# generate Voronoi tessellation
-vor = Voronoi(coordenadas)
-
-# find min/max values for normalization
-minima = min(aristas)
-maxima = max(aristas)
-
-# normalize chosen colormap
-norm = mpl.colors.Normalize(vmin=minima, vmax=maxima, clip=True)
-mapper = cm.ScalarMappable(norm=norm, cmap=cm.Blues_r)
-
-# plot Voronoi diagram, and fill finite regions with color mapped from speed value
-voronoi_plot_2d(vor, show_points=True, show_vertices=False, s=1)
-
-for r in range(len(vor.point_region)):
-    region = vor.regions[vor.point_region[r]]
-    if not -1 in region:
-        polygon = [vor.vertices[i] for i in region]
-        plt.fill(*zip(*polygon), color=mapper.to_rgba(aristas[r]))
-circle = plt.Circle((0,0),1, color = 'r', alpha = 0.25, fill = False)
-plt.gca().add_patch(circle)
-plt.show()
+#Parte 5
+voronoi('mapa8electrodos.txt', gr)
+#voronoi('mapa32electrodos.txt', gr)
