@@ -1005,14 +1005,23 @@ gr = WeightedGraph(directed = False)
 #8 electerodos, las personales
 #graficas('Lectura_Stef.txt','mapa8electrodos.txt',gr)
 #graficas('Memoria_Stef.txt','mapa8electrodos.txt',gr)
-graficas('Operaciones_Stef.txt','mapa8electrodos.txt',gr)
+#graficas('Operaciones_Stef.txt','mapa8electrodos.txt',gr)
 
 #Las de 32 electrodos
 #graficas('LecturaS0A.txt', 'mapa32electrodos.txt', gr)
-#graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', gr)
+graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', gr)
 #graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', gr)
 
 
+#Para graficar la grafica junto con sus caminos
+#graficarGraficas8(gr)
+graficarGraficas32(gr)
+
+"""
+    Para ver los caminos se usa la funcion de prepCaminos
+    se envia el arregloOD correspondiente y la grafica
+    Para ver los caminos, 0 grafica de 8, 1 grafica de 32
+"""
 #Arreglo origen destino, tuplas de donde parte a donde va el camino a explorar
 #Arreglo para los viajes de 8 electrodos
 arregloOD8 = [('Fz','PO8'),('C3','Oz'),('PO7','C4'),('Oz','PO7'),('Cz','Pz')]
@@ -1021,28 +1030,18 @@ arregloOD8 = [('Fz','PO8'),('C3','Oz'),('PO7','C4'),('Oz','PO7'),('Cz','Pz')]
 arregloOD32 = [('F7','PO4'),('CP5','O2'),('P4','T7'),('AF3','CP6'),('F8','CP2'),('CP1','FC2'),('F3','O1')]
 
 
-#Para graficar la grafica junto con sus caminos
-graficarGraficas8(gr)
-#graficarGraficas32(gr)
-
-"""
-    Para ver los caminos se usa la funcion de prepCaminos
-    se envia el arregloOD correspondiente y la grafica
-    Para ver los caminos, 0 grafica de 8, 1 grafica de 32
-"""
-
-prepCaminos(arregloOD8,0,gr)
-#prepCaminos(arregloOD32,1,gr)
+#prepCaminos(arregloOD8,0,gr)
+prepCaminos(arregloOD32,1,gr)
 
 grFloyd = WeightedGraphFloyd(directed = False)
 
 #Matriz de conexion, 0 y 1
-graficas('Lectura_Stef.txt', 'mapa8electrodos.txt', grFloyd)
+#graficas('Lectura_Stef.txt', 'mapa8electrodos.txt', grFloyd)
 #graficas('Memoria_Stef.txt', 'mapa8electrodos.txt', grFloyd)
 #graficas('Operaciones_Stef.txt', 'mapa8electrodos.txt', grFloyd)
 
 #graficas('LecturaS0A.txt', 'mapa32electrodos.txt', grFloyd)
-#graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', grFloyd)
+graficas('MemoriaS0A.txt', 'mapa32electrodos.txt', grFloyd)
 #graficas('OperacionesS0A.txt', 'mapa32electrodos.txt', grFloyd)
 
 print("Length of shortest paths Matriz Floyd")
@@ -1053,22 +1052,28 @@ print(floyd_marshall(grFloyd._adjacency_matrix))
 #Para prim se tiene que crear una nueva grafica que se llenara con los valores ddel arbol minimo
 newGraph = WeightedGraph(directed = False)
 #Se envia la funcion el grafico desde donde comenzar, una grafica ya al 100%, y la nueva grafica
-prim('Fz',gr, newGraph)
+
+#prim('Fz',gr, newGraph) #Para 8 electrodos
+prim('FC5',gr, newGraph) #Para 32 electrodos
+
 
 print("Grafica madre")
 gr.print_graph()
 
 print("Grafica PRIM")
-graficarGraficas8(newGraph)
-#graficarGraficas32(newGraph)
+#graficarGraficas8(newGraph)
+graficarGraficas32(newGraph)
 
 newGraph.print_graph()
 
 #Parte 4
 #Llamar a las funciones para hacer los cascos convexos
-grahamPoints = graham('mapa8electrodos.txt',newGraph)
-plotGraham('mapa8electrodos.txt', grahamPoints)
+#grahamPoints = graham('mapa8electrodos.txt',newGraph)
+#plotGraham('mapa8electrodos.txt', grahamPoints)
+
+grahamPoints = graham('mapa32electrodos.txt',newGraph)
+plotGraham('mapa32electrodos.txt', grahamPoints)
 
 #Parte 5
-voronoi('mapa8electrodos.txt', gr)
-#voronoi('mapa32electrodos.txt', gr)
+#voronoi('mapa8electrodos.txt', gr)
+voronoi('mapa32electrodos.txt', gr)
