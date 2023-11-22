@@ -915,7 +915,7 @@ def graham(coordenadasTexto, graph=WeightedGraph):
     #Se obtiene y se ordena la lista de los angulos en comparacion al pivote
     listaAngulos = []
     for x in range(len(coordenadas)):
-        if x != pivote:
+        if x != pivote and coordenadas[x][0] in graph.vertices():
             angulo = calcular_angulo_entre_puntos(float(coordenadas[pivote][1]),float(coordenadas[pivote][2]),float(coordenadas[x][1]),float(coordenadas[x][2]))
             z = float(coordenadas[pivote][1])
             distancia = math.sqrt((float(coordenadas[x][1]) - float(coordenadas[pivote][1]))**2 + (float(coordenadas[x][2]) - float(coordenadas[pivote][2]))**2)
